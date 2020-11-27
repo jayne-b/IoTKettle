@@ -118,6 +118,7 @@ const App = () => {
     if (connected && kettleState === 'ready') {
       // Ask the kettle to start
       if (window.confirm("Are you sure you wish to heat the water to %s?", toHeat)) {
+        client.publish('kettle/start', '%s', toHeat)
         client.publish('kettle/start', 'true')
         console.log('start kettle')
       }
