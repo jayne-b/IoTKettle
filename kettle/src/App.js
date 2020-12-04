@@ -16,7 +16,7 @@ const options = {
   username: 'token:token_ZDqPMfay586vK53E',
   password: '',
 };
-const client = mqtt.connect('mqtt://mqtt.beebotte.com:1883', options);
+const client = mqtt.connect('mqtt://mqtt.beebotte.com', options);
 
 // states = on, off, ready, boiling
 var kettleState = ''
@@ -88,7 +88,7 @@ const App = () => {
     // can only get temp if we're connected to mqtt and kettle isn't off
     if (connected && kettleState !== 'off') {
       // Ask the kettle to send temp
-      client.publish('kettle/temp', 'true')
+      client.publish('kettle/temp', {"data": true, "write": true})
     }
   }
 
