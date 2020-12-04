@@ -18,7 +18,8 @@ const options = {
   username: 'iot kettle',
   password: 'iconic'
 };
-const client = mqtt.connect('wss://test.mosquitto.org:8081', options);
+const client = mqtt.connect('mqtt://mqtt.beebotte.com:8883',
+  { username: 'token:token_ZDqPMfay586vK53E', password: '' });
 
 // states = on, off, ready, boiling
 var kettleState = ''
