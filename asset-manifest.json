@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/IoTKettle/static/css/main.7d180cbf.chunk.css",
-    "main.js": "/IoTKettle/static/js/main.23057e4d.chunk.js",
-    "main.js.map": "/IoTKettle/static/js/main.23057e4d.chunk.js.map",
+    "main.js": "/IoTKettle/static/js/main.88ac9cfa.chunk.js",
+    "main.js.map": "/IoTKettle/static/js/main.88ac9cfa.chunk.js.map",
     "runtime-main.js": "/IoTKettle/static/js/runtime-main.a187768c.js",
     "runtime-main.js.map": "/IoTKettle/static/js/runtime-main.a187768c.js.map",
     "static/js/2.da1290ca.chunk.js": "/IoTKettle/static/js/2.da1290ca.chunk.js",
@@ -18,6 +18,6 @@
     "static/js/runtime-main.a187768c.js",
     "static/js/2.da1290ca.chunk.js",
     "static/css/main.7d180cbf.chunk.css",
-    "static/js/main.23057e4d.chunk.js"
+    "static/js/main.88ac9cfa.chunk.js"
   ]
 }
