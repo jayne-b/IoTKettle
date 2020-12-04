@@ -13,13 +13,10 @@ import start from './Images/start.png'
 
 const mqtt = require('mqtt');
 const options = {
-  protocol: 'mqtts',
-  clientId: 'numpties',
-  username: 'iot kettle',
-  password: 'iconic'
+  username: 'token:token_ZDqPMfay586vK53E',
+  password: '',
 };
-const client = mqtt.connect('mqtt://mqtt.beebotte.com:8883',
-  { username: 'token:token_ZDqPMfay586vK53E', password: '' });
+const client = mqtt.connect('mqtt://mqtt.beebotte.com:1883', options);
 
 // states = on, off, ready, boiling
 var kettleState = ''
