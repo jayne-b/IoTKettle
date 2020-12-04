@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/IoTKettle/static/css/main.8c8b27cf.chunk.css",
-    "main.js": "/IoTKettle/static/js/main.932bdda0.chunk.js",
-    "main.js.map": "/IoTKettle/static/js/main.932bdda0.chunk.js.map",
+    "main.css": "/IoTKettle/static/css/main.7d180cbf.chunk.css",
+    "main.js": "/IoTKettle/static/js/main.1f728757.chunk.js",
+    "main.js.map": "/IoTKettle/static/js/main.1f728757.chunk.js.map",
     "runtime-main.js": "/IoTKettle/static/js/runtime-main.a187768c.js",
     "runtime-main.js.map": "/IoTKettle/static/js/runtime-main.a187768c.js.map",
     "static/js/2.da1290ca.chunk.js": "/IoTKettle/static/js/2.da1290ca.chunk.js",
@@ -10,14 +10,14 @@
     "static/js/3.8160e2e2.chunk.js": "/IoTKettle/static/js/3.8160e2e2.chunk.js",
     "static/js/3.8160e2e2.chunk.js.map": "/IoTKettle/static/js/3.8160e2e2.chunk.js.map",
     "index.html": "/IoTKettle/index.html",
-    "static/css/main.8c8b27cf.chunk.css.map": "/IoTKettle/static/css/main.8c8b27cf.chunk.css.map",
+    "static/css/main.7d180cbf.chunk.css.map": "/IoTKettle/static/css/main.7d180cbf.chunk.css.map",
     "static/js/2.da1290ca.chunk.js.LICENSE.txt": "/IoTKettle/static/js/2.da1290ca.chunk.js.LICENSE.txt",
     "static/media/start.50b1543f.png": "/IoTKettle/static/media/start.50b1543f.png"
   },
   "entrypoints": [
     "static/js/runtime-main.a187768c.js",
     "static/js/2.da1290ca.chunk.js",
-    "static/css/main.8c8b27cf.chunk.css",
-    "static/js/main.932bdda0.chunk.js"
+    "static/css/main.7d180cbf.chunk.css",
+    "static/js/main.1f728757.chunk.js"
   ]
 }
