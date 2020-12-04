@@ -16,7 +16,7 @@ const options = {
   username: 'token:token_ZDqPMfay586vK53E',
   password: '',
 };
-const client = mqtt.connect('wss://mqtt.beebotte.com:8883', options);
+const client = mqtt.connect('wss://mqtt.beebotte.com', options);
 
 // states = on, off, ready, boiling
 var kettleState = ''
