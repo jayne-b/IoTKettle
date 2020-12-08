@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/IoTKettle/static/css/main.7d180cbf.chunk.css",
-    "main.js": "/IoTKettle/static/js/main.4045181a.chunk.js",
-    "main.js.map": "/IoTKettle/static/js/main.4045181a.chunk.js.map",
-    "runtime-main.js": "/IoTKettle/static/js/runtime-main.99edac2a.js",
-    "runtime-main.js.map": "/IoTKettle/static/js/runtime-main.99edac2a.js.map",
-    "static/js/2.db48ee15.chunk.js": "/IoTKettle/static/js/2.db48ee15.chunk.js",
-    "static/js/2.db48ee15.chunk.js.map": "/IoTKettle/static/js/2.db48ee15.chunk.js.map",
-    "static/js/3.a527f3af.chunk.js": "/IoTKettle/static/js/3.a527f3af.chunk.js",
-    "static/js/3.a527f3af.chunk.js.map": "/IoTKettle/static/js/3.a527f3af.chunk.js.map",
+    "main.js": "/IoTKettle/static/js/main.9ae2d6c5.chunk.js",
+    "main.js.map": "/IoTKettle/static/js/main.9ae2d6c5.chunk.js.map",
+    "runtime-main.js": "/IoTKettle/static/js/runtime-main.17cf7cce.js",
+    "runtime-main.js.map": "/IoTKettle/static/js/runtime-main.17cf7cce.js.map",
+    "static/js/2.9f737c91.chunk.js": "/IoTKettle/static/js/2.9f737c91.chunk.js",
+    "static/js/2.9f737c91.chunk.js.map": "/IoTKettle/static/js/2.9f737c91.chunk.js.map",
+    "static/js/3.91f131d1.chunk.js": "/IoTKettle/static/js/3.91f131d1.chunk.js",
+    "static/js/3.91f131d1.chunk.js.map": "/IoTKettle/static/js/3.91f131d1.chunk.js.map",
     "index.html": "/IoTKettle/index.html",
     "static/css/main.7d180cbf.chunk.css.map": "/IoTKettle/static/css/main.7d180cbf.chunk.css.map",
-    "static/js/2.db48ee15.chunk.js.LICENSE.txt": "/IoTKettle/static/js/2.db48ee15.chunk.js.LICENSE.txt",
+    "static/js/2.9f737c91.chunk.js.LICENSE.txt": "/IoTKettle/static/js/2.9f737c91.chunk.js.LICENSE.txt",
     "static/media/start.50b1543f.png": "/IoTKettle/static/media/start.50b1543f.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.99edac2a.js",
-    "static/js/2.db48ee15.chunk.js",
+    "static/js/runtime-main.17cf7cce.js",
+    "static/js/2.9f737c91.chunk.js",
     "static/css/main.7d180cbf.chunk.css",
-    "static/js/main.4045181a.chunk.js"
+    "static/js/main.9ae2d6c5.chunk.js"
   ]
 }
