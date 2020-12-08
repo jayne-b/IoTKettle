@@ -13,8 +13,10 @@ const client = mqtt.connect('mqtt://mqtt.beebotte.com:8883',
 var state = 'on'
 
 client.on('connect', () => {
-    client.subscribe('kettle/start')
-    client.subscribe('kettle/heatTemp')
+    client.subscribe('kettle/start', { qos: 0 })
+    client.subscribe('kettle/heatTemp', { qos: 0 })
+    client.subscribe('kettle/weight', { qos: 0 })
+    client.subscribe('kettle/temp', { qos: 0 })
     client.publish('kettle/connected', 'true')
     sendStateUpdate()
 })
@@ -28,12 +30,18 @@ client.on('message', (topic, message) => {
             return handleWeightRequest(message)
         case 'kettle/start':
             return handleStartRequest(message)
+        case 'kettle/heatTemp':
+            return handleHeatTemp(message)
     }
 })
 
 function sendStateUpdate() {
     console.log('sending state %s', state)
     client.publish('kettle/state', state)
+} 
+
+function handleHeatTemp(message) {
+    //set temp to heat
 }
 
 function handleTempRequest(message) {
