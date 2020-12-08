@@ -11,12 +11,38 @@ import Temperature from './Components/Temperature'
 import Water from './Components/Water'
 import start from './Images/start.png'
 
-const mqtt = require('mqtt');
+const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
+
+const host = 'ws://broker.emqx.io:8083/mqtt'
+
 const options = {
-  username: 'token:token_ZDqPMfay586vK53E',
-  password: '',
-};
-const client = mqtt.connect('wss://mqtt.beebotte.com', options);
+  keepalive: 60,
+  clientId: clientId,
+  protocolId: 'MQTT',
+  protocolVersion: 4,
+  clean: true,
+  reconnectPeriod: 1000,
+  connectTimeout: 30 * 1000,
+  will: {
+    topic: 'WillMsg',
+    payload: 'Connection Closed abnormally..!',
+    qos: 0,
+    retain: false
+  },
+}
+const mqtt = require('mqtt')
+console.log('Connecting mqtt client')
+const client = mqtt.connect(host, options)
+
+client.on('error', (err) => {
+  console.log('Connection error: ', err)
+  client.end()
+})
+
+client.on('reconnect', () => {
+  console.log('Reconnecting...')
+})
+
 
 // states = on, off, ready, boiling
 var kettleState = ''
@@ -41,13 +67,13 @@ const App = () => {
       setToHeat(100)
     }
   }
-
-
   client.on('connect', () => {
-    client.subscribe('kettle/connected')
-    client.subscribe('kettle/state')
-    client.subscribe('kettle/temp')
-    client.subscribe('kettle/weight')
+    console.log('Client connected:' + clientId)
+    // Subscribe
+    client.subscribe('kettle/connected', { qos: 0 })
+    client.subscribe('kettle/state', { qos: 0 })
+    client.subscribe('kettle/temp', { qos: 0 })
+    client.subscribe('kettle/weight', { qos: 0 })
   })
 
   client.on('message', (topic, message) => {
@@ -88,7 +114,7 @@ const App = () => {
     // can only get temp if we're connected to mqtt and kettle isn't off
     if (connected && kettleState !== 'off') {
       // Ask the kettle to send temp
-      client.publish('kettle/temp', { "data": true, "write": true })
+      client.publish('kettle/temp', 'true')
     }
   }
 
@@ -116,7 +142,7 @@ const App = () => {
     if (connected && kettleState === 'ready') {
       // Ask the kettle to start
       if (window.confirm("Are you sure you wish to heat the water to %s?", toHeat)) {
-        client.publish('kettle/start', '%s', toHeat)
+        client.publish('kettle/start', toHeat)
         client.publish('kettle/start', 'true')
         console.log('start kettle')
       }
