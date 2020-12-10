@@ -115,27 +115,11 @@ const App = () => {
     console.log('kettle state update to %s', message)
   }
 
-  function getTemp() {
-    // can only get temp if we're connected to mqtt and kettle isn't off
-    if (connected && kState !== 'off') {
-      // Ask the kettle to send temp
-      client.publish('kettle/getTemp', 'true')
-    }
-  }
-
-  function getWeight() {
-    // can only get weight if we're connected to mqtt and kettle isn't off
-    if (connected && kState !== 'off') {
-      // Ask the kettle to send weight
-      client.publish('kettle/getWeight', 'true')
-    }
-  }
-
   const startKettle = () => {
     if ((toHeat > currTemp) && (weight > 10)) {
       setKState('Ready')
       if (window.confirm("Are you sure you wish to heat the water to " + toHeat + "°C?")) {
-        client.publish('kettle/heatTemp', toHeat, { qos: 2, retain: true })
+        client.publish('kettle/heatTemp', toHeat.toString(), { qos: 2, retain: true })
         client.publish('kettle/start', 'true', { qos: 2, retain: true })
         console.log('start kettle')
       }
