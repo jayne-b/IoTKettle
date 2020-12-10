@@ -14,8 +14,8 @@ const options = {
     reconnectPeriod: 1000,
     connectTimeout: 30 * 1000,
     will: {
-        topic: 'WillMsg',
-        payload: 'Connection Closed abnormally..!',
+        topic: 'kettle/connected',
+        payload: false,
         qos: 0,
         retain: false
     },

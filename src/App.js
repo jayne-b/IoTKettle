@@ -116,17 +116,21 @@ const App = () => {
   }
 
   const startKettle = () => {
-    if ((toHeat > currTemp) && (weight > 10)) {
-      setKState('Ready')
-      if (window.confirm("Are you sure you wish to heat the water to " + toHeat + "°C?")) {
-        client.publish('kettle/heatTemp', toHeat.toString(), { qos: 2, retain: true })
-        client.publish('kettle/start', 'true', { qos: 2, retain: true })
-        console.log('start kettle')
+    if (connected) {
+      if ((toHeat > currTemp) && (weight > 10)) {
+        setKState('Ready')
+        if (window.confirm("Are you sure you wish to heat the water to " + toHeat + "°C?")) {
+          client.publish('kettle/heatTemp', toHeat.toString(), { qos: 2 })
+          client.publish('kettle/start', 'true', { qos: 2 })
+          console.log('start kettle')
+        }
+      } else if (toHeat <= currTemp) {
+        alert("The water temperature is currently higher than the temperature you wish to heat the water to!")
+      } else if (weight < 10) {
+        alert("There currently isn't enough water in the kettle to safely heat")
       }
-    } else if (toHeat <= currTemp) {
-      alert("The water temperature is currently higher than the temperature you wish to heat the water to!")
-    } else if (weight < 10) {
-      alert("There currently isn't enough water in the kettle to safely heat")
+    } else {
+      alert("No connection")
     }
   }
 
