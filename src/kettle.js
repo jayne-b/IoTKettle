@@ -1,32 +1,56 @@
 import React from 'react'
 
-const mqtt = require('mqtt');
-const options = {
-    protocol: 'mqtts',
-    clientId: 'numpties',
-    username: 'iot kettle',
-    password: 'iconic'
-};
-const client = mqtt.connect('mqtt://mqtt.beebotte.com:8883',
-    { username: 'token:token_ZDqPMfay586vK53E', password: '' });
+const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
 
-var state = 'on'
+const host = 'wss://broker.emqx.io:8084/mqtt'
+require('events').EventEmitter.defaultMaxListeners = 0
+
+const options = {
+    keepalive: 60,
+    clientId: clientId,
+    protocolId: 'MQTT',
+    protocolVersion: 4,
+    clean: true,
+    reconnectPeriod: 1000,
+    connectTimeout: 30 * 1000,
+    will: {
+        topic: 'WillMsg',
+        payload: 'Connection Closed abnormally..!',
+        qos: 0,
+        retain: false
+    },
+}
+const mqtt = require('mqtt')
+console.log('Connecting mqtt client')
+const client = mqtt.connect(host, options)
+
+client.on('error', (err) => {
+    console.log('Connection error: ', err)
+    client.end()
+})
+
+client.on('reconnect', () => {
+    console.log('Reconnecting...')
+})
+
+var state = 'On'
 
 client.on('connect', () => {
     client.subscribe('kettle/start', { qos: 0 })
     client.subscribe('kettle/heatTemp', { qos: 0 })
-    client.subscribe('kettle/weight', { qos: 0 })
-    client.subscribe('kettle/temp', { qos: 0 })
+    client.subscribe('kettle/getWeight', { qos: 0 })
+    client.subscribe('kettle/getTemp', { qos: 0 })
     client.publish('kettle/connected', 'true')
+    client.publish('kettle/state', 'On')
     sendStateUpdate()
 })
 
 client.on('message', (topic, message) => {
     console.log('received message %s %s', topic, message)
     switch (topic) {
-        case 'kettle/temp':
+        case 'kettle/getTemp':
             return handleTempRequest(message)
-        case 'kettle/weight':
+        case 'kettle/getWeight':
             return handleWeightRequest(message)
         case 'kettle/start':
             return handleStartRequest(message)
@@ -45,10 +69,8 @@ function handleHeatTemp(message) {
 }
 
 function handleTempRequest(message) {
-    if (state !== 'off' && message === 'true') {
+    if (message === 'true') {
         console.log('getting current temperature')
-        state = 'on'
-        sendStateUpdate()
 
         //send kettle temp data
         client.publish('kettle/temp', 'temp')
@@ -56,8 +78,8 @@ function handleTempRequest(message) {
 }
 
 function handleWeightRequest(message) {
-    if (state !== 'off' && state !== 'boiling' && message === 'true') {
-        state = 'ready'
+    if (state !== 'boiling' && message === 'true') {
+        state = 'Ready'
         sendStateUpdate()
 
         //send kettle weight data
