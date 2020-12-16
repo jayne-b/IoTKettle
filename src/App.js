@@ -11,6 +11,9 @@ import Temperature from './Components/Temperature'
 import State from './Components/State'
 import Water from './Components/Water'
 import start from './Images/start.png'
+import graph from './Images/graph.png'
+import Dropdown from 'react-dropdown'
+import 'react-dropdown/style.css'
 
 var connected = false
 console.log('connected: ' + connected)
@@ -51,20 +54,21 @@ client.on('reconnect', () => {
 client.on('connect', () => {
   console.log('Client connected:' + clientId)
   // Subscribe
-  client.subscribe('kettle/connected', { qos: 0 })
-  client.subscribe('kettle/state', { qos: 0 })
-  client.subscribe('kettle/temp', { qos: 0 })
-  client.subscribe('kettle/weight', { qos: 0 })
-  client.publish('kettle/getTemp', 'true', { qos: 2 })
-  client.publish('kettle/getWeight', 'true', { qos: 2 })
+  client.subscribe('Kettle/Connected', { qos: 2 })
+  client.subscribe('Kettle/State', { qos: 2 })
+  client.subscribe('Kettle/Temperature', { qos: 2 })
+  client.subscribe('Kettle/Weight', { qos: 2 })
 })
 
 const App = () => {
-  // states = on, off, ready, boiling
-  const [kState, setKState] = useState('Off')
+  // kState 0=ready, 1=boiling
+  const [kState, setKState] = useState(-1)
   const [currTemp, setCurrTemp] = useState(0)
   const [weight, setWeight] = useState(0)
   const [toHeat, setToHeat] = useState(0)
+  // states = on, off, ready, boiling
+  const [state, setState] = useState('Off')
+  const [song, setSong] = useState(0)
   const green = () => setToHeat(80)
   const black = () => setToHeat(100)
   const white = () => setToHeat(70)
@@ -81,53 +85,82 @@ const App = () => {
     }
   }
 
+  const songOptions = [
+    'Default', 'FF Victory', 'Song of Time', 'Super Mario Theme'
+  ];
+  const defaultOption = songOptions[0];
+
   client.on('message', (topic, message) => {
     switch (topic) {
-      case 'kettle/connected':
+      case 'Kettle/Connected':
         return handleKettleConnected(message)
-      case 'kettle/state':
+      case 'Kettle/State':
         return handleKettleState(message)
-      case 'kettle/temp':
+      case 'Kettle/Temperature':
         return handleKettleTemp(message)
-      case 'kettle/weight':
+      case 'Kettle/Weight':
         return handleKettleWeight(message)
     }
     console.log('No handler for topic %s', topic)
   })
 
   function handleKettleWeight(message) {
-    console.log('kettle weight received %s', message)
-    setWeight(parseInt(message))
+    var tempWeight = parseInt(message)
+    if (tempWeight !== weight) {
+      console.log('kettle weight received %s', tempWeight, weight)
+      setWeight(tempWeight)
+    }
   }
 
   function handleKettleTemp(message) {
-    console.log('kettle temp received %s', message)
-    setCurrTemp(parseInt(message))
+    var tempTemp = parseInt(message)
+    if (currTemp !== tempTemp) {
+      console.log('kettle temp received %s', tempTemp, currTemp)
+      setCurrTemp(tempTemp)
+    }
   }
 
   function handleKettleConnected(message) {
     connected = (message.toString() === 'true')
     console.log('kettle connected status %s', connected)
+    if (connected) {
+      setState('On')
+    }
   }
 
   function handleKettleState(message) {
-    setKState(message.toString())
+    var value = parseInt(message)
+    if (value === 1) {
+      setState('Boiling')
+    }
+    setKState(value)
     console.log('kettle state update to %s', message)
+  }
+
+  const onChange = option => {
+    setSong(songOptions.indexOf(option.value, 0))
+    console.log('song choice %d', song)
   }
 
   const startKettle = () => {
     if (connected) {
-      if ((toHeat > currTemp) && (weight > 10)) {
-        setKState('Ready')
-        if (window.confirm("Are you sure you wish to heat the water to " + toHeat + "°C?")) {
-          client.publish('kettle/heatTemp', toHeat.toString(), { qos: 2 })
-          client.publish('kettle/start', 'true', { qos: 2 })
-          console.log('start kettle')
+      if (kState === 1) {
+        alert("The kettle is already heating!")
+      } else {
+        if ((toHeat > currTemp) && (weight > 10)) {
+          setKState(0)
+          setState('Ready')
+          if (window.confirm("Are you sure you wish to heat the water to " + toHeat + "°C?")) {
+            client.publish('Kettle/HeatTemp', toHeat.toString())
+            client.publish('Kettle/Song', song.toString())
+            console.log('song %d', song)
+            console.log('start kettle')
+          }
+        } else if (toHeat <= currTemp) {
+          alert("The water temperature is currently higher than the temperature you wish to heat the water to!")
+        } else if (weight < 10) {
+          alert("There currently isn't enough water in the kettle to safely heat")
         }
-      } else if (toHeat <= currTemp) {
-        alert("The water temperature is currently higher than the temperature you wish to heat the water to!")
-      } else if (weight < 10) {
-        alert("There currently isn't enough water in the kettle to safely heat")
       }
     } else {
       alert("No connection")
@@ -144,12 +177,18 @@ const App = () => {
       <Button handleClick={oolong} text='Oolong Tea' image={oolongTea} />
       <Button handleClick={coffee} text='Instant Coffee' image={coffeePic} />
       <Button handleClick={manualTemp} text='Set Temperature' image={manual} />
-      <State text='Kettle state' value={kState} />
+      <State text='Kettle state' value={state} />
       <Temperature text='Current temp' value={currTemp} scale='°C' />
       <Temperature text='Set temp' value={toHeat} scale='°C' />
       <Water text='Water Level' value={weight} />
+      <b>Choose song: </b><br />
+      <Dropdown options={songOptions} onChange={onChange} value={defaultOption} placeholder="Choose Song" /><br />
       <Button handleClick={startKettle} text='Start' image={start} />
+      <p align="left">--Telemetry--<br />
+        <a href='https://iot-kettle.herokuapp.com/telemetry'
+          rel="noopener noreferrer" target="_blank"><img src={graph} alt="Telemetry"></img></a></p>
     </div>
+
   );
 }
 
