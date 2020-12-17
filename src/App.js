@@ -163,8 +163,10 @@ const App = () => {
           }
         } else if (toHeat <= currTemp) {
           alert("The water temperature is currently higher than the temperature you wish to heat the water to!")
-        } else if (weight < 10) {
+        } else if (weight < 1430 && weight > 1275) {
           alert("There currently isn't enough water in the kettle to safely heat")
+        } else if (weight < 1260) {
+          alert("The kettle isn't on the base!")
         }
       }
     } else {
