@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import greenTea from './Images/green tea.png'
 import blackTea from './Images/black tea.png'
@@ -15,8 +15,7 @@ import graph from './Images/graph.png'
 import Dropdown from 'react-dropdown'
 import 'react-dropdown/style.css'
 
-var connected = false
-console.log('connected: ' + connected)
+//console.log('connected: ' + connected)
 
 const clientId = 'mqttjs_' + Math.random().toString(16).substr(2, 8)
 
@@ -61,8 +60,6 @@ client.on('connect', () => {
 })
 
 const App = () => {
-  // kState 0=ready, 1=boiling
-  const [kState, setKState] = useState(-1)
   const [currTemp, setCurrTemp] = useState(0)
   const [weight, setWeight] = useState(0)
   const [toHeat, setToHeat] = useState(0)
@@ -77,11 +74,11 @@ const App = () => {
   const manualTemp = () => {
     var manTemp = prompt("Enter the temperature: ")
     if (parseInt(manTemp) > currTemp && manTemp <= 100) {
-      setToHeat(parseInt(manTemp))
-    } else if (parseInt(manTemp) < currTemp) {
+      setToHeat(manTemp)
+    } else if (manTemp < currTemp) {
       alert("The entered temperature is lower than the current water temperature")
     } else if (parseInt(manTemp) > 100) {
-      setToHeat(parseInt(100))
+      setToHeat(100)
     }
   }
 
@@ -90,50 +87,59 @@ const App = () => {
   ];
   const defaultOption = songOptions[0];
 
-  client.on('message', (topic, message) => {
-    switch (topic) {
-      case 'Kettle/Connected':
-        return handleKettleConnected(message)
-      case 'Kettle/State':
-        return handleKettleState(message)
-      case 'Kettle/Temperature':
-        return handleKettleTemp(message)
-      case 'Kettle/Weight':
-        return handleKettleWeight(message)
+  useEffect(() => {
+    const listener = (topic, message) => {
+      switch (topic) {
+        case 'Kettle/Connected':
+          return handleKettleConnected(message)
+        case 'Kettle/State':
+          return handleKettleState(message)
+        case 'Kettle/Temperature':
+          return handleKettleTemp(message)
+        case 'Kettle/Weight':
+          return handleKettleWeight(message)
+
+        default:
+          console.log('No handler for topic %s', topic)
+      }
     }
-    console.log('No handler for topic %s', topic)
-  })
+
+    client.on('message', listener)
+    return () => {
+      client.removeListener('message', listener)
+    }
+  });
+
 
   function handleKettleWeight(message) {
-    var tempWeight = parseInt(message)
-    if (tempWeight !== weight) {
-      console.log('kettle weight received %s', tempWeight, weight)
-      setWeight(tempWeight)
+    if (parseInt(message) !== weight && state !== 'Off') {
+      console.log('kettle weight received %s', parseInt(message), weight)
+      setWeight(parseInt(message))
     }
   }
 
   function handleKettleTemp(message) {
-    var tempTemp = parseInt(message)
-    if (currTemp !== tempTemp) {
-      console.log('kettle temp received %s', tempTemp, currTemp)
-      setCurrTemp(tempTemp)
+    if (currTemp !== parseInt(message) && state !== 'Off') {
+      console.log('kettle temp received %s', parseInt(message), currTemp)
+      setCurrTemp(parseInt(message))
     }
   }
 
   function handleKettleConnected(message) {
-    connected = (message.toString() === 'true')
-    console.log('kettle connected status %s', connected)
-    if (connected) {
+    if (parseInt(message) === 1) {
       setState('On')
+    } else if (parseInt(message) === 0) {
+      setState('Off')
     }
+    console.log('kettle connected status %s', state)
   }
 
   function handleKettleState(message) {
-    var value = parseInt(message)
-    if (value === 1) {
+    if (parseInt(message) === 1) {
       setState('Boiling')
+    } else {
+      setState('On')
     }
-    setKState(value)
     console.log('kettle state update to %s', message)
   }
 
@@ -143,12 +149,11 @@ const App = () => {
   }
 
   const startKettle = () => {
-    if (connected) {
-      if (kState === 1) {
+    if (state !== 'Off') {
+      if (state === 'Boiling') {
         alert("The kettle is already heating!")
       } else {
         if ((toHeat > currTemp) && (weight > 10)) {
-          setKState(0)
           setState('Ready')
           if (window.confirm("Are you sure you wish to heat the water to " + toHeat + "°C?")) {
             client.publish('Kettle/HeatTemp', toHeat.toString())
